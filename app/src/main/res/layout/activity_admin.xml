@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/drawer_layout"
+    tools:context=".Actvity.Admin">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,17 +18,16 @@
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Light"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
 
         <TextView
-            android:id="@+id/shopText"
+            android:id="@+id/adminshopText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="56dp"
             android:text="Shop"
             android:textColor="@android:color/black"
             android:textSize="32sp"
@@ -36,29 +36,29 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
-            android:id="@+id/shopFilter"
+            android:id="@+id/adminshopFilter"
             android:layout_width="125dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="56dp"
+            android:layout_marginTop="68dp"
             android:layout_marginEnd="16dp"
             android:iconifiedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/shopText"
+            app:layout_constraintStart_toEndOf="@+id/adminshopText"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="TouchTargetSizeCheck" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/shopRCV"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shopFilter">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/adminshopRCV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adminshopText">
 
-        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -73,6 +73,18 @@
         app:menu="@menu/bottom_navigation_menu"
         />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/navigation_drawer"
+        android:layout_gravity="start"
+        android:background="@color/black"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        android:theme="@style/ThemeOverlay.AppCompat.navTheme"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/navigation_drawer_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

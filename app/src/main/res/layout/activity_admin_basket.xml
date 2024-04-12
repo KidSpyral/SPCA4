@@ -5,26 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawer_layout"
     android:background="@drawable/background"
-    tools:context=".Actvity.Basket">
+    android:id="@+id/drawer_layout"
+    tools:context=".Actvity.AdminBasket">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
 
-    <androidx.cardview.widget.CardView
+
+        <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -45,18 +45,18 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/Basket"
+                android:id="@+id/AdminBasket"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="16dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@+id/Checkout"
+                app:layout_constraintBottom_toTopOf="@+id/AdminCheckout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/Checkout"
+                android:id="@+id/AdminCheckout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="16dp"
@@ -89,7 +89,18 @@
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
         />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/navigation_drawer"
+        android:layout_gravity="start"
+        android:background="@color/black"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        android:theme="@style/ThemeOverlay.AppCompat.navTheme"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/navigation_drawer_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>
