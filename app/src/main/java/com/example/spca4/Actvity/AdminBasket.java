@@ -19,6 +19,7 @@ import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminBasket extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -92,10 +93,10 @@ public class AdminBasket extends AppCompatActivity implements NavigationView.OnN
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int itemId = item.getItemId();
-        if (itemId == R.id.backButton){
-            Intent intent = new Intent(getApplicationContext(), Admin.class);
-            startActivity(intent);
-            finish();        }
+        if (itemId == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);        }
         return true;
     }
 

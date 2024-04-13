@@ -12,22 +12,28 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class Admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class Admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddNewItem.OnItemSavedListener {
 
     BottomNavigationView bottomNavigationView;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
+    FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+
+        fab = findViewById(R.id.fab);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -43,6 +49,15 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setBackground(null);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddNewItem dialog = AddNewItem.newInstance();
+                dialog.setOnItemSavedListener(Admin.this);
+                dialog.show(getSupportFragmentManager(), AddNewItem.TAG);
+            }
+        });
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -93,5 +108,18 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
             finish();         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(getApplicationContext(), AdminLogin.class);
+        startActivity(intent);
+        return true;
+    }
+
+    @Override
+    public void onItemSaved(String description) {
+
     }
 }

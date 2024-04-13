@@ -6,17 +6,16 @@ public class ReadWriteUserDetails {
 
     public String name;
     public String phone;
-    public String code;
+
 
     public ReadWriteUserDetails(){
 
     }
 
-   public ReadWriteUserDetails(String textEmailAddress, String textPassword, String textName, String textPhoneNumber, String textCode){
+   public ReadWriteUserDetails(String textEmailAddress, String textPassword, String textName, String textPhoneNumber){
        this.email = textEmailAddress;
        this.password = textPassword;
        this.name = textName;
        this.phone = textPhoneNumber;
-       this.code = textCode;
    }
 }

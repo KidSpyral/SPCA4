@@ -15,6 +15,7 @@ import android.widget.Button;
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Basket extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
@@ -78,10 +79,10 @@ public class Basket extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int itemId = item.getItemId();
-        if (itemId == R.id.backButton){
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();        }
+        if (itemId == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);        }
         return true;
     }
 }
