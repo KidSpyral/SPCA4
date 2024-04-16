@@ -9,8 +9,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,24 +41,25 @@ public class Register extends AppCompatActivity {
     EditText phone;
     EditText name;
     FirebaseAuth mAuth;
+    Spinner spinner;
     private final static String TAG= "Register";
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        Spinner typeSpinner = findViewById(R.id.type);
+        String[] types = {"Admin", "User"};
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        typeSpinner.setAdapter(adapter);
 
         NoAccountSignIn = findViewById(R.id.NoAccountSignIn);
         Register = findViewById(R.id.Register);
@@ -67,6 +70,7 @@ public class Register extends AppCompatActivity {
         email = findViewById(R.id.email);
         name = findViewById(R.id.name);
         phone = findViewById(R.id.phone);
+        spinner = findViewById(R.id.type);
 
         NoAccountSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +89,7 @@ public class Register extends AppCompatActivity {
                 String textPassword = password.getText().toString();
                 String textName = name.getText().toString();
                 String textPhoneNumber = phone.getText().toString();
+                String userType = spinner.getSelectedItem().toString(); // Get selected userType from spinner
 
                 String mobileRegex = "08[0-9]{8}";
                 Matcher mobilematcher;
@@ -126,23 +131,24 @@ public class Register extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-
                                         FirebaseUser currentUser = mAuth.getCurrentUser();
-                                        ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(textEmailAddress, textPassword, textName, textPhoneNumber);
+                                        ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(textEmailAddress, textPassword, textName, textPhoneNumber, userType);
                                         DatabaseReference referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
 
                                         referenceProfile.child(currentUser.getUid()).setValue(writeUserDetails).addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-
                                                 if (task.isSuccessful()) {
-                                                    // If sign in works, display a message to the user.
-                                                    Toast.makeText(Register.this, "Registration Complete.",
-                                                            Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(getApplicationContext(), Login.class);
-                                                    startActivity(intent);
+                                                    Toast.makeText(Register.this, "Registration Complete.", Toast.LENGTH_SHORT).show();
+                                                    // Check userType and navigate accordingly
+                                                    if (userType.equals("Admin")) {
+                                                        Intent intent = new Intent(getApplicationContext(), Admin.class);
+                                                        startActivity(intent);
+                                                    } else {
+                                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                        startActivity(intent);
+                                                    }
                                                     finish();
-
                                                 }
                                             }
                                         });

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.spca4.Model.ReadWriteUserDetails;
 import com.example.spca4.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,6 +26,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Login extends AppCompatActivity {
 
@@ -37,16 +43,50 @@ public class Login extends AppCompatActivity {
     private final static String TAG= "Login";
 
     @Override
-    public void onStart() {
+    protected void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+        if (currentUser != null) {
+            DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Registered Users").child(currentUser.getUid());
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        ReadWriteUserDetails userDetails = dataSnapshot.getValue(ReadWriteUserDetails.class);
+                        String userType = userDetails.getUserType();
+                        // Check userType and navigate accordingly
+                        if (userType.equals("Admin")) {
+                            // User is an admin
+                            Intent intent = new Intent(getApplicationContext(), Admin.class);
+                            startActivity(intent);
+                            finish();
+                        } else if (userType.equals("User")) {
+                            // User is a regular user
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // Unknown user type, handle accordingly
+                            // For example, redirect to a generic landing page
+                            Intent intent = new Intent(getApplicationContext(), Login.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle database error
+                    Log.e(TAG, "Database error: " + databaseError.getMessage());
+                    Toast.makeText(Login.this, "Database error. Please try again.", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,46 +135,63 @@ public class Login extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    Toast.makeText(Login.this, "LogIn Successful.",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    // Retrieve user details from database to get userType
+                                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("Registered Users").child(user.getUid());
+                                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                ReadWriteUserDetails userDetails = dataSnapshot.getValue(ReadWriteUserDetails.class);
+                                                String userType = userDetails.getUserType();
+                                                // Check userType and navigate accordingly
+                                                if (userType.equals("Admin")) {
+                                                    Toast.makeText(Login.this, "LogIn Successful.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(getApplicationContext(), Admin.class);
+                                                    startActivity(intent);
+                                                } else {
+                                                    Toast.makeText(Login.this, "LogIn Successful.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                                finish();
+                                            } else {
+                                                // Handle the case where user data doesn't exist
+                                                // This should ideally not happen if user registration is handled properly
+                                                Toast.makeText(Login.this, "User data not found.", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                            // Handle errors here
+                                            Log.e(TAG, "Error fetching user data: " + databaseError.getMessage());
+                                            Toast.makeText(Login.this, "Error fetching user data.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 } else {
+                                    // Handle login failures
                                     try {
                                         throw task.getException();
                                     } catch (FirebaseAuthInvalidUserException e) {
-                                        password.setError("User does not exist or is no longer valid. Register again");
-                                        password.requestFocus();
-                                    } catch (FirebaseAuthInvalidCredentialsException e) {
-                                        email.setError("Invalid details. Check and Re-Enter.");
+                                        email.setError("User does not exist or is no longer valid. Register again");
                                         email.requestFocus();
-                                    }catch (Exception e) {
+                                    } catch (FirebaseAuthInvalidCredentialsException e) {
+                                        password.setError("Invalid details. Check and Re-Enter.");
+                                        password.requestFocus();
+                                    } catch (Exception e) {
                                         Log.e(TAG, e.getMessage());
                                         Toast.makeText(Login.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }
                         });
+
             }
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu3, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int itemId = item.getItemId();
-        if (itemId == R.id.backButton){
-            Intent intent = new Intent(getApplicationContext(), Landing.class);
-            startActivity(intent);
-            finish();        }
-        return true;
-    }
 }

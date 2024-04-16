@@ -9,21 +9,78 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.spca4.Model.ReadWriteUserDetails;
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Profile extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
     Toolbar toolbar;
+    FirebaseAuth mAuth;
+    String User;
+    TextView numbertextview;
+    TextView nametextview;
+    TextView emailtextview;
+    TextView userTypetextview;
+    DatabaseReference referenceProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        mAuth = FirebaseAuth.getInstance();
+        User = mAuth.getCurrentUser().getUid();
+
+        numbertextview = findViewById(R.id.Phone);
+        nametextview = findViewById(R.id.Name);
+        emailtextview = findViewById(R.id.Email);
+        userTypetextview = findViewById(R.id.Type);
+
+        referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
+
+        if (User == null) {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
+        }
+        else
+            referenceProfile.child((User)).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    ReadWriteUserDetails userprofile  = snapshot.getValue(ReadWriteUserDetails.class);
+                    if (userprofile != null){
+                        String name = userprofile.getName();
+                        String number = userprofile.getPhone();
+                        String email = userprofile.getEmail();
+                        String userType = userprofile.getUserType();
+
+                        nametextview.setText(name);
+                        numbertextview.setText(number);
+                        emailtextview.setText(email);
+                        userTypetextview.setText(userType);
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                    Toast.makeText(Profile.this, "Error!", Toast.LENGTH_SHORT).show();
+
+                }
+            });
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -65,7 +122,7 @@ public class Profile extends AppCompatActivity {
 
         int itemId = item.getItemId();
         if (itemId == R.id.logout){
-            FirebaseAuth.getInstance().signOut();
+            mAuth.signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);        }
         return true;

@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class Items extends ItemId implements Parcelable
+public class Basket extends ItemId implements Parcelable
 {
     private String Title;
     private String Manufacturer;
@@ -15,11 +15,11 @@ public class Items extends ItemId implements Parcelable
     private String Category;
     private String ImageUrl;
 
-    public Items(){
+    public Basket(){
 
     }
 
-    public Items(String title, String manufacturer, double price, int quantity, String category, String imageUrl) {
+    public Basket(String title, String manufacturer, double price, int quantity, String category, String imageUrl) {
         Title = title;
         Manufacturer = manufacturer;
         Price = price;
@@ -78,7 +78,7 @@ public class Items extends ItemId implements Parcelable
     }
 
     // Parcelable implementation
-    protected Items(Parcel in) {
+    protected Basket(Parcel in) {
         super(in);
         Title = in.readString();
         Manufacturer = in.readString();
@@ -88,15 +88,15 @@ public class Items extends ItemId implements Parcelable
         ImageUrl = in.readString();
     }
 
-    public static final Creator<Items> CREATOR = new Creator<Items>() {
+    public static final Creator<Basket> CREATOR = new Creator<Basket>() {
         @Override
-        public Items createFromParcel(Parcel in) {
-            return new Items(in);
+        public Basket createFromParcel(Parcel in) {
+            return new Basket(in);
         }
 
         @Override
-        public Items[] newArray(int size) {
-            return new Items[size];
+        public Basket[] newArray(int size) {
+            return new Basket[size];
         }
     };
 

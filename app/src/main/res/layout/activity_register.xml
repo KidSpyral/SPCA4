@@ -9,7 +9,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="415dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
         android:layout_marginTop="-80dp"
         android:layout_marginEnd="50dp"
@@ -92,7 +92,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/phone" />
+                app:layout_constraintTop_toBottomOf="@+id/type" />
 
             <EditText
                 android:id="@+id/phone"
@@ -102,7 +102,7 @@
                 android:layout_marginTop="22dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/edit_bg"
-                android:drawableLeft="@drawable/ic_phone"
+                android:drawableLeft="@drawable/ic_pin"
                 android:drawablePadding="5dp"
                 android:ems="10"
                 android:hint="Phone"
@@ -113,11 +113,30 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/name" />
 
+            <Spinner
+                android:id="@+id/type"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/edit_bg"
+                android:drawableLeft="@drawable/ic_phone"
+                android:drawablePadding="5dp"
+                android:ems="10"
+                android:hint="Code"
+                android:inputType="text"
+                android:paddingLeft="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/phone" />
+
             <TextView
                 android:id="@+id/NoAccountSignIn"
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="2dp"
                 android:clickable="true"
                 android:text="Already have an account? Sign In!"
                 app:layout_constraintBottom_toBottomOf="parent"

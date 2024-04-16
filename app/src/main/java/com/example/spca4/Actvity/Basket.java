@@ -21,11 +21,16 @@ public class Basket extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     Button Checkout;
     Toolbar toolbar;
+    FirebaseAuth mAuth;
+    String User;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basket);
+
+        mAuth = FirebaseAuth.getInstance();
+        User = mAuth.getCurrentUser().getUid();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,7 +85,7 @@ public class Basket extends AppCompatActivity {
 
         int itemId = item.getItemId();
         if (itemId == R.id.logout){
-            FirebaseAuth.getInstance().signOut();
+            mAuth.signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);        }
         return true;

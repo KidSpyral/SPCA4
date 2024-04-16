@@ -28,11 +28,16 @@ public class AdminBasket extends AppCompatActivity implements NavigationView.OnN
 
     DrawerLayout drawerLayout;
     Toolbar toolbar;
+    FirebaseAuth AdminmAuth;
+    String Admin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_basket);
+
+        AdminmAuth = FirebaseAuth.getInstance();
+        Admin = AdminmAuth.getCurrentUser().getUid();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +99,7 @@ public class AdminBasket extends AppCompatActivity implements NavigationView.OnN
 
         int itemId = item.getItemId();
         if (itemId == R.id.logout){
-            FirebaseAuth.getInstance().signOut();
+            AdminmAuth.signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);        }
         return true;
