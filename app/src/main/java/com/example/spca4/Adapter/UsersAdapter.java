@@ -91,6 +91,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.TaskViewHold
                     // Pass user details to the PurchaseHistory activity
                     Intent intent = new Intent(context, PurchaseHistory.class);
                     intent.putExtra("userDetails", userDetails1);
+                    intent.putExtra("userId", userDetails.getUserId());
                     context.startActivity(intent);
                 });
             } else {

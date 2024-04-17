@@ -13,6 +13,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.spca4.Actvity.AddNewItem;
+import com.example.spca4.Actvity.Admin;
+import com.example.spca4.Actvity.CustomDialogFragment;
+import com.example.spca4.Actvity.MainActivity;
 import com.example.spca4.Model.Basket;
 import com.example.spca4.Model.Items;
 import com.example.spca4.R;
@@ -30,6 +34,11 @@ public class shopAdapter extends RecyclerView.Adapter<shopAdapter.TaskViewHolder
     private FirebaseAuth mAuth;
     private DatabaseReference userBasketReference; // Reference to the user's basket
     private Context context;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
 
     public shopAdapter(List<Items> shopList, Context context) {
         this.shopList = shopList;
@@ -77,6 +86,9 @@ public class shopAdapter extends RecyclerView.Adapter<shopAdapter.TaskViewHolder
         return new shopAdapter.TaskViewHolder(itemView);
     }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
     @Override
     public void onBindViewHolder(@NonNull shopAdapter.TaskViewHolder holder, int position) {
         Items shopItem = shopList.get(position);
@@ -89,6 +101,12 @@ public class shopAdapter extends RecyclerView.Adapter<shopAdapter.TaskViewHolder
             holder.shopCategory.setText("Category: " + shopItem.getCategory());
             String imageUrl = shopItem.getImageUrl();
             Picasso.get().load(imageUrl).into(holder.shopImage);
+
+            holder.shopImage.setOnClickListener(view -> {
+                if (listener != null) {
+                    listener.onItemClick(position);
+                }
+            });
 
             // Add To Basket Button Click Listener
             holder.AddToBasket.setOnClickListener(view -> {

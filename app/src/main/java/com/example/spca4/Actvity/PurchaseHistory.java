@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.spca4.Adapter.BasketAdapter;
 import com.example.spca4.Adapter.PurchaseAdapter;
 import com.example.spca4.Model.Basket;
+import com.example.spca4.Model.Purchases;
 import com.example.spca4.Model.ReadWriteUserDetails;
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,7 +47,7 @@ public class PurchaseHistory extends AppCompatActivity implements NavigationView
     FirebaseAuth mAuth;
     String User;
     private com.example.spca4.Adapter.PurchaseAdapter PurchaseAdapter;
-    private List<com.example.spca4.Model.Basket> purchaseList;
+    private List<Purchases> purchasesList;
     private RecyclerView recyclerView;
 
     @Override
@@ -99,44 +100,41 @@ public class PurchaseHistory extends AppCompatActivity implements NavigationView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        purchaseList = new ArrayList<>();
-        PurchaseAdapter = new PurchaseAdapter(purchaseList, this);
+        purchasesList = new ArrayList<>();
+        PurchaseAdapter = new PurchaseAdapter(purchasesList, this);
         recyclerView.setAdapter(PurchaseAdapter);
 
         // Receive user details from previous activity
         Intent intent = getIntent();
-        if (intent != null) {
-            ReadWriteUserDetails userDetails = (ReadWriteUserDetails) intent.getSerializableExtra("userDetails");
-            if (userDetails != null) {
-                String userId = userDetails.getUserId(); // Get the user ID from userDetails
-
+            ReadWriteUserDetails userDetails1 = (ReadWriteUserDetails) intent.getSerializableExtra("userDetails");
+                String userId = userDetails1.getUserId(); // Get the user ID from userDetails
                 // Now you have the correct userId, proceed with fetching the basket
                 fetchBasket(userId);
-            }
-        }
+
 
 
 
     }
 
     private void fetchBasket(String userId) {
-        DatabaseReference basketRef = FirebaseDatabase.getInstance().getReference().child("Registered Users").child(userId).child("Basket");
-        basketRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                purchaseList.clear();
-                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                                    com.example.spca4.Model.Basket purchaseItem = snapshot.getValue(com.example.spca4.Model.Basket.class);
-                                    if (purchaseItem != null) {
-                                        purchaseList.add(purchaseItem);
-                                    }
-                                }
-                                PurchaseAdapter.notifyDataSetChanged();
-                            }
+        DatabaseReference purchasesRef = FirebaseDatabase.getInstance().getReference()
+                .child("Registered Users").child(userId).child("Purchases");
+        purchasesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                purchasesList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Purchases purchaseItem = snapshot.getValue(Purchases.class);
+                    if (purchaseItem != null) {
+                        purchasesList.add(purchaseItem);
+                    }
+                }
+                PurchaseAdapter.notifyDataSetChanged();
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(PurchaseHistory.this, "Error fetching basket", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PurchaseHistory.this, "Error fetching purchases", Toast.LENGTH_SHORT).show();
             }
         });
     }

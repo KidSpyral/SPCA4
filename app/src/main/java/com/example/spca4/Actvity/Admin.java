@@ -16,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.spca4.Adapter.StockAdapter;
@@ -33,7 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddNewItem.OnItemSavedListener, StockObserver {
 
@@ -46,6 +51,7 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
     private StockAdapter ItemsAdapter;
     private List<Items> stockList;
     private RecyclerView recyclerView, recyclerView2;
+    Spinner adminshopFilter;
 
     private List<StockObserver> observers = new ArrayList<>();
 
@@ -129,10 +135,71 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
         stockList = new ArrayList<>();
         ItemsAdapter = new StockAdapter(stockList,this);
         recyclerView.setAdapter(ItemsAdapter);
-        fetchStock();
+        fetchStock("");
+        fetchUniqueTitles();
     }
 
-    private void fetchStock() {
+    private void fetchUniqueTitles() {
+        DatabaseReference stockRef = FirebaseDatabase.getInstance().getReference("Stock");
+        stockRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Set<String> uniqueTitles = new HashSet<>();
+
+                uniqueTitles.add("");
+
+                for (DataSnapshot entrySnapshot : snapshot.getChildren()) {
+                    Items entry = entrySnapshot.getValue(Items.class);
+                    if (entry != null) {
+                        uniqueTitles.add(entry.getTitle());
+                    }
+                }
+                // Now, 'uniqueMoods' set contains unique mood entries
+                // Populate the spinner with these entries
+                populateSpinner(uniqueTitles);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+    }
+
+    private void populateSpinner(Set<String> uniqueTitles) {
+        // Convert set to list for spinner adapter
+        List<String> titleList = new ArrayList<>(uniqueTitles);
+
+        // Create an ArrayAdapter and set it to the spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, titleList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Spinner titleSpinner = findViewById(R.id.adminshopFilter);
+        titleSpinner.setAdapter(adapter);
+
+        titleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                String selectedTitle = titleList.get(position);
+                if (selectedTitle.isEmpty()) {
+                    // Handle the case where no mood is selected
+                    fetchStock("");
+                } else {
+                    // Handle the selected mood
+                    fetchStock(selectedTitle);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // Fetch all entries when nothing is selected
+                fetchStock("");
+            }
+        });
+    }
+
+    private void fetchStock(String selectedTitle) {
         DatabaseReference stockRef = FirebaseDatabase.getInstance().getReference("Stock");
         stockRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -140,7 +207,7 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
                 stockList.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Items stockItem = snapshot.getValue(Items.class);
-                    if (stockItem != null) {
+                    if (stockItem != null && (selectedTitle.isEmpty() || selectedTitle.equals(stockItem.getTitle()))) {
                         stockList.add(stockItem);
                     }
                 }
@@ -155,6 +222,7 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
             }
         });
     }
+
 
     @Override
     public void onStockUpdate(List<Items> stockList) {

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.spca4.Model.Basket;
+import com.example.spca4.Model.Purchases;
 import com.example.spca4.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,12 +23,12 @@ import java.util.List;
 
 public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.TaskViewHolder> {
 
-    private List<Basket> basketList;
+    private List<Purchases> purchasesList;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private Context context;
 
-    public PurchaseAdapter(List<com.example.spca4.Model.Basket> basketList, Context context){
-        this.basketList = basketList;
+    public PurchaseAdapter(List<Purchases> purchasesList, Context context){
+        this.purchasesList = purchasesList;
         this.context = context;
     }
 
@@ -66,7 +67,7 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.TaskVi
 
     @Override
     public void onBindViewHolder(@NonNull PurchaseAdapter.TaskViewHolder holder, int position) {
-        Basket basketItem = basketList.get(position);
+        Purchases basketItem = purchasesList.get(position);
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null && basketItem != null) {
@@ -86,10 +87,10 @@ public class PurchaseAdapter extends RecyclerView.Adapter<PurchaseAdapter.TaskVi
     }
 
     public int getItemCount() {
-        if (basketList == null) {
-            Log.d("BasketAdapter", "basketList is null");
+        if (purchasesList == null) {
+            Log.d("PurchaseAdapter", "purchasesList is null");
             return 0;
         }
-        return basketList.size();
+        return purchasesList.size();
     }
 }

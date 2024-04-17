@@ -71,6 +71,7 @@
             android:layout_centerHorizontal="true"
             android:scaleType="fitCenter"
             android:src="@drawable/angry"
+            android:onClick="Review"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

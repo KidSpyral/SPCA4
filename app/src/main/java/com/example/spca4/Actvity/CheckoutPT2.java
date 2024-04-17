@@ -19,13 +19,19 @@ import android.widget.Toast;
 import com.example.spca4.Model.AddressDetails;
 import com.example.spca4.Model.CardDetails;
 import com.example.spca4.Model.CardDetailsBuilder;
+import com.example.spca4.Model.Purchases;
 import com.example.spca4.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class CheckoutPT2 extends AppCompatActivity {
 
@@ -41,6 +47,7 @@ public class CheckoutPT2 extends AppCompatActivity {
     private EditText cvv;
     private Context context;
     private DatabaseReference userCardDetailsReference; // Reference to the user's basket
+    Button ConfirmPurchase;
 
 
     @Override
@@ -58,7 +65,7 @@ public class CheckoutPT2 extends AppCompatActivity {
         cvv = findViewById(R.id.CVV);
 
 
-        Continue = findViewById(R.id.ConfirmDetails);
+        Continue = findViewById(R.id.ConfirmPurchase);
 
         Continue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +101,64 @@ public class CheckoutPT2 extends AppCompatActivity {
                 return false;
             }
         });
+
+        ConfirmPurchase = findViewById(R.id.ConfirmPurchase);
+        ConfirmPurchase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setCardDetailsandPurchase();
+                confirmPurchaseAndClearBasket();
+            }
+        });
+    }
+
+    private void confirmPurchaseAndClearBasket() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+
+            // Get a reference to the basket and purchases nodes
+            DatabaseReference basketRef = FirebaseDatabase.getInstance().getReference()
+                    .child("Registered Users").child(userId).child("Basket");
+            DatabaseReference purchasesRef = FirebaseDatabase.getInstance().getReference()
+                    .child("Registered Users").child(userId).child("Purchases");
+
+            // Move items from basket to purchases
+            basketRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Purchases basketItems = snapshot.getValue(Purchases.class);
+                        if (basketItems != null) {
+                            // Move item to purchases node
+                            String purchaseId = purchasesRef.push().getKey();
+                            if (purchaseId != null) {
+                                purchasesRef.child(purchaseId).setValue(basketItems);
+                            }
+                        }
+                    }
+                    // Clear the basket after items are moved to purchases
+                    basketRef.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                // Basket cleared
+                                Toast.makeText(CheckoutPT2.this, "Purchase confirmed. Basket cleared.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(CheckoutPT2.this, "Failed to clear basket.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Toast.makeText(CheckoutPT2.this, "Error processing purchase.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(CheckoutPT2.this, "User not authenticated", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setCardDetailsandPurchase() {
@@ -125,7 +190,7 @@ public class CheckoutPT2 extends AppCompatActivity {
             return;
         }
         if(textcardnumber.length() != 16) {
-            Toast.makeText(CheckoutPT2.this, "Please Re-Enter Day, Day should be 2 Digits", Toast.LENGTH_SHORT).show();
+            Toast.makeText(CheckoutPT2.this, "Please Re-Enter Card Number, It should be 16 Digits", Toast.LENGTH_SHORT).show();
             return;
         }
         if(textday.length() != 2) {

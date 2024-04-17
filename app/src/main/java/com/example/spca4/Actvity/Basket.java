@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.spca4.Adapter.BasketAdapter;
@@ -41,6 +42,7 @@ public class Basket extends AppCompatActivity {
     private com.example.spca4.Adapter.BasketAdapter BasketAdapter;
     private List<com.example.spca4.Model.Basket> basketList;
     private RecyclerView recyclerView;
+    TextView totalPriceTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class Basket extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Checkout = findViewById(R.id.Checkout);
+        totalPriceTextView = findViewById(R.id.TQText);
 
         Checkout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,15 +109,15 @@ public class Basket extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 basketList.clear();
+                double totalPrice = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     com.example.spca4.Model.Basket basketItem = snapshot.getValue(com.example.spca4.Model.Basket.class);
                     if (basketItem != null) {
-
-
                         basketList.add(basketItem);
+                        totalPrice += basketItem.getPrice() * basketItem.getQuantity();
                     }
                 }
-
+                totalPriceTextView.setText("Total Price: €" + totalPrice); // Update the total price TextView
                 BasketAdapter.notifyDataSetChanged();
             }
 

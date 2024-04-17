@@ -51,55 +51,52 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toTopOf="@+id/TotalPrice"
+                app:layout_constraintBottom_toTopOf="@+id/ExpDetails"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/TotalPrice"
+            <LinearLayout
+                android:id="@+id/ExpDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="65dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="5dp"
-                android:text="Total Price:"
-                android:textColor="@android:color/black"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toTopOf="@+id/Checkout"
-                app:layout_constraintEnd_toStartOf="@+id/TQText"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-            <TextView
-                android:id="@+id/TQText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="65dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="@android:color/black"
-                android:textSize="25sp"
-                app:layout_constraintBottom_toTopOf="@+id/Checkout"
+                android:layout_marginTop="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="Total Price" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/Basket">
+
+
+                <TextView
+                    android:id="@+id/TQText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:textColor="@android:color/black"
+                    android:textSize="25sp"
+                    app:layout_constraintBottom_toTopOf="@+id/Checkout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/TotalPrice"
+                    tools:text="Total Price" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/Checkout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="5dp"
                 android:onClick="Checkout"
                 android:text="Checkout"
                 app:iconTint="#000000"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ExpDetails" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

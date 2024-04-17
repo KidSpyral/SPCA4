@@ -101,15 +101,15 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.TaskViewHold
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null && stockItem != null) {
-                holder.Title.setText("Title: " + stockItem.getTitle());
-                holder.Price.setText("Price: €" + String.valueOf((int) stockItem.getPrice()));
-                holder.Quantity.setText("Quantity: " + String.valueOf((int) stockItem.getQuantity()));
-                holder.Manufacturer.setText("Manufacturer: " + stockItem.getManufacturer());
-                holder.Category.setText("Category: " + stockItem.getCategory());
-                String imageUrl = stockItem.getImageUrl();
-                Picasso.get().load(imageUrl).into(holder.Image);
-                holder.Update.setOnClickListener(this);
-                holder.Update.setTag(position);
+            holder.Title.setText("Title: " + stockItem.getTitle());
+            holder.Price.setText("Price: €" + String.valueOf((int) stockItem.getPrice()));
+            holder.Quantity.setText("Quantity: " + String.valueOf((int) stockItem.getQuantity()));
+            holder.Manufacturer.setText("Manufacturer: " + stockItem.getManufacturer());
+            holder.Category.setText("Category: " + stockItem.getCategory());
+            String imageUrl = stockItem.getImageUrl();
+            Picasso.get().load(imageUrl).into(holder.Image);
+            holder.Update.setOnClickListener(this);
+            holder.Update.setTag(position);
         }
     }
     public Context getContext(){
