@@ -35,7 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddNewItem.OnItemSavedListener {
+public class Admin extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AddNewItem.OnItemSavedListener, StockObserver {
 
     BottomNavigationView bottomNavigationView;
     DrawerLayout drawerLayout;
@@ -46,6 +46,25 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
     private StockAdapter ItemsAdapter;
     private List<Items> stockList;
     private RecyclerView recyclerView, recyclerView2;
+
+    private List<StockObserver> observers = new ArrayList<>();
+
+    // Method to register observers
+    public void registerObserver(StockObserver observer) {
+        observers.add(observer);
+    }
+
+    // Method to unregister observers
+    public void unregisterObserver(StockObserver observer) {
+        observers.remove(observer);
+    }
+
+    // Method to notify observers
+    private void notifyObservers(List<Items> stockList) {
+        for (StockObserver observer : observers) {
+            observer.onStockUpdate(stockList);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +146,7 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
                 }
                 Log.d("MainActivity", "ShopList size: " + stockList.size());
                 ItemsAdapter.notifyDataSetChanged();
+                notifyObservers(stockList); // Notify observers when stock data changes
             }
 
             @Override
@@ -136,12 +156,17 @@ public class Admin extends AppCompatActivity implements NavigationView.OnNavigat
         });
     }
 
+    @Override
+    public void onStockUpdate(List<Items> stockList) {
+        // Update RecyclerView or any other UI component with the new stock data
+        ItemsAdapter.setStockList(stockList);
+        ItemsAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-
 
         return true;
     }

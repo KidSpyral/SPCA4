@@ -1,26 +1,50 @@
 package com.example.spca4.Model;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.Serializable;
 import java.util.UUID;
 
-public class ReadWriteUserDetails {
+public class ReadWriteUserDetails implements Serializable {
+    private String userId;
     private String email;
     private String password;
     private String name;
     private String phone;
-    private String userType; // New field to store the user type (Admin or User)
+    private String userType;
 
-    // Constructor
+    // Private constructor to prevent direct instantiation
     public ReadWriteUserDetails(String email, String password, String name, String phone, String userType) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.userType = userType;
+
+        // Set userId to the Firebase UID
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            this.userId = currentUser.getUid();
+        } else {
+            // Handle the case where the current user is null
+            // For example, you can generate a random ID as a fallback
+            this.userId = generateRandomId();
+        }
     }
 
     // Default constructor
     public ReadWriteUserDetails(){
 
+    }
+
+    // Getters and setters for fields
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     // Getters
@@ -63,5 +87,11 @@ public class ReadWriteUserDetails {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    // Method to generate a random ID (fallback if Firebase UID is not available)
+    private String generateRandomId() {
+        // Implement your logic to generate a random ID
+        return UUID.randomUUID().toString();
     }
 }

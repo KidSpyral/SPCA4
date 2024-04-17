@@ -53,7 +53,10 @@ public class StockAdapter extends RecyclerView.Adapter<StockAdapter.TaskViewHold
     }
 
 
-
+    public void setStockList(List<Items> stockList) {
+        this.stockList = stockList;
+        notifyDataSetChanged(); // Notify adapter that the dataset has changed
+    }
 
     public class TaskViewHolder extends RecyclerView.ViewHolder {
 

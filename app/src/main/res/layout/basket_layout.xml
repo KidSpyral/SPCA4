@@ -15,7 +15,7 @@
 
 
         <TextView
-            android:id="@+id/shopTitle"
+            android:id="@+id/BasketTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -24,48 +24,48 @@
             tools:text="Title" />
 
         <TextView
-            android:id="@+id/shopPrice"
+            android:id="@+id/BasketPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@+id/shopTitle"
+            app:layout_constraintStart_toEndOf="@+id/BasketTitle"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Price" />
 
         <TextView
-            android:id="@+id/shopQuantity"
+            android:id="@+id/BasketQuantity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
-            app:layout_constraintStart_toEndOf="@+id/shopPrice"
+            app:layout_constraintStart_toEndOf="@+id/BasketPrice"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Quantity" />
 
         <TextView
-            android:id="@+id/shopManufacturer"
+            android:id="@+id/BasketManufacturer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shopTitle"
+            app:layout_constraintTop_toBottomOf="@+id/BasketTitle"
             tools:text="Manufacturer" />
 
         <TextView
-            android:id="@+id/shopCategory"
+            android:id="@+id/BasketCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
             android:layout_marginTop="5dp"
-            app:layout_constraintStart_toEndOf="@+id/shopManufacturer"
-            app:layout_constraintTop_toBottomOf="@+id/shopQuantity"
+            app:layout_constraintStart_toEndOf="@+id/BasketManufacturer"
+            app:layout_constraintTop_toBottomOf="@+id/BasketQuantity"
             tools:text="Category" />
 
         <ImageView
-            android:id="@+id/shopImage"
+            android:id="@+id/BasketImage"
             android:layout_width="92dp"
             android:layout_height="92dp"
             android:layout_centerHorizontal="true"
@@ -76,16 +76,16 @@
 
 
         <Button
-            android:id="@+id/AddToBasket"
+            android:id="@+id/RemoveFromBasket"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="Add To Basket"
-            android:onClick="AddToBasket"
+            android:text="Remove From Basket"
+
             app:iconTint="#000000"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shopCategory" />
+            app:layout_constraintTop_toBottomOf="@+id/BasketManufacturer" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

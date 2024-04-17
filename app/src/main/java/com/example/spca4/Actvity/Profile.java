@@ -23,17 +23,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Profile extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
 
-    BottomNavigationView bottomNavigationView;
-    Toolbar toolbar;
-    FirebaseAuth mAuth;
-    String User;
-    TextView numbertextview;
-    TextView nametextview;
-    TextView emailtextview;
-    TextView userTypetextview;
-    DatabaseReference referenceProfile;
+public class Profile extends AppCompatActivity {
+    private List<ProfileObserver> observers = new ArrayList<>();
+    private ProfileView profileView;
+    private BottomNavigationView bottomNavigationView;
+    private Toolbar toolbar;
+    private FirebaseAuth mAuth;
+    private String User;
+    private TextView numbertextview;
+    private TextView nametextview;
+    private TextView emailtextview;
+    private TextView userTypetextview;
+    private DatabaseReference referenceProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +58,12 @@ public class Profile extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
-        }
-        else
+        } else {
             referenceProfile.child((User)).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ReadWriteUserDetails userprofile  = snapshot.getValue(ReadWriteUserDetails.class);
-                    if (userprofile != null){
+                    ReadWriteUserDetails userprofile = snapshot.getValue(ReadWriteUserDetails.class);
+                    if (userprofile != null) {
                         String name = userprofile.getName();
                         String number = userprofile.getPhone();
                         String email = userprofile.getEmail();
@@ -71,16 +74,17 @@ public class Profile extends AppCompatActivity {
                         emailtextview.setText(email);
                         userTypetextview.setText(userType);
 
+                        // Notify observers of profile changes
+                        notifyObservers(userprofile);
                     }
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-
                     Toast.makeText(Profile.this, "Error!", Toast.LENGTH_SHORT).show();
-
                 }
             });
+        }
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -110,6 +114,30 @@ public class Profile extends AppCompatActivity {
         });
     }
 
+    // Method to register observers
+    public void addObserver(ProfileObserver observer) {
+        observers.add(observer);
+    }
+
+    // Method to remove observers
+    public void removeObserver(ProfileObserver observer) {
+        observers.remove(observer);
+    }
+
+    // Notify all observers when profile data changes
+    private void notifyObservers(ReadWriteUserDetails userDetails) {
+        for (ProfileObserver observer : observers) {
+            observer.updateProfile(userDetails);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Unregister observer to avoid memory leaks
+        removeObserver(profileView);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -119,14 +147,12 @@ public class Profile extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int itemId = item.getItemId();
-        if (itemId == R.id.logout){
+        if (itemId == R.id.logout) {
             mAuth.signOut();
             Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);        }
+            startActivity(intent);
+        }
         return true;
     }
-
-
 }

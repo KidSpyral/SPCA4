@@ -1,13 +1,7 @@
 package com.example.spca4.Model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+public class Purchases extends PurchasesId {
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
-@IgnoreExtraProperties
-public class Basket extends BasketId
-{
     private String Title;
     private String Manufacturer;
     private double Price;
@@ -15,11 +9,11 @@ public class Basket extends BasketId
     private String Category;
     private String ImageUrl;
 
-    public Basket(){
+    public Purchases(){
 
     }
 
-    public Basket(String title, String manufacturer, double price, int quantity, String category, String imageUrl) {
+    public Purchases(String title, String manufacturer, double price, int quantity, String category, String imageUrl) {
         Title = title;
         Manufacturer = manufacturer;
         Price = price;
@@ -86,7 +80,7 @@ public class Basket extends BasketId
                 ", quantity=" + Quantity +
                 ", category='" + Category + '\'' +
                 ", imageUrl='" + ImageUrl + '\'' +
-                ", basketId='" + basketId + '\'' +
+                ", purchasesId='" + purchasesId + '\'' +
                 '}';
     }
 }

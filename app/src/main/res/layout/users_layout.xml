@@ -63,11 +63,10 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
+            android:text="Name:"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Email"
-            android:text="Name:" />
+            app:layout_constraintTop_toBottomOf="@+id/Email" />
 
         <TextView
             android:id="@+id/Name"
@@ -77,7 +76,6 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/NameLabel"
             app:layout_constraintTop_toBottomOf="@+id/Email"
             tools:text="Name" />
@@ -87,21 +85,37 @@
             android:layout_width="45dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
             android:text="Phone:"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/Phone" />
+            app:layout_constraintEnd_toStartOf="@+id/Phone"
+            app:layout_constraintTop_toBottomOf="@+id/TypeLabel" />
 
         <TextView
             android:id="@+id/Phone"
             android:layout_width="104dp"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
             android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Type"
+            tools:text="Phone" />
+
+        <Button
+            android:id="@+id/PurchaseHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Purchase History"
+            android:onClick="PurchaseHistory"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="Phone" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/PhoneLabel"
+            app:layout_constraintVertical_bias="0.345">
+
+        </Button>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

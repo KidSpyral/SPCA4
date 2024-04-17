@@ -7,6 +7,17 @@
     android:background="@drawable/background"
     tools:context=".Actvity.CheckoutPT2">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -93,7 +104,7 @@
                 android:drawablePadding="5dp"
                 android:ems="10"
                 android:layout_weight="1"
-                android:hint="Date"
+                android:hint="Day"
                 android:inputType="text|date"
                 android:paddingLeft="5dp"
                 app:layout_constraintEnd_toEndOf="parent"

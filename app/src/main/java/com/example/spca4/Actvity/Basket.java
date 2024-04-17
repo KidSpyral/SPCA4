@@ -3,19 +3,34 @@ package com.example.spca4.Actvity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.example.spca4.Adapter.BasketAdapter;
+import com.example.spca4.Adapter.shopAdapter;
+import com.example.spca4.Model.Items;
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Basket extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
@@ -23,6 +38,9 @@ public class Basket extends AppCompatActivity {
     Toolbar toolbar;
     FirebaseAuth mAuth;
     String User;
+    private com.example.spca4.Adapter.BasketAdapter BasketAdapter;
+    private List<com.example.spca4.Model.Basket> basketList;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +87,41 @@ public class Basket extends AppCompatActivity {
                     finish();
                 }
                 return false;
+            }
+        });
+
+        recyclerView = findViewById(R.id.Basket);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        basketList = new ArrayList<>();
+        BasketAdapter = new BasketAdapter(basketList, this);
+        recyclerView.setAdapter(BasketAdapter);
+        fetchBasket();
+    }
+
+    private void fetchBasket() {
+        DatabaseReference basketRef = FirebaseDatabase.getInstance().getReference().child("Registered Users").child(User).child("Basket");
+        basketRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                basketList.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    com.example.spca4.Model.Basket basketItem = snapshot.getValue(com.example.spca4.Model.Basket.class);
+                    if (basketItem != null) {
+
+
+                        basketList.add(basketItem);
+                    }
+                }
+
+                BasketAdapter.notifyDataSetChanged();
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Basket.this, "Error fetching stock", Toast.LENGTH_SHORT).show();
             }
         });
     }

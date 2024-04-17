@@ -1,5 +1,7 @@
 package com.example.spca4.Actvity;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,13 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.spca4.Adapter.UsersAdapter;
+import com.example.spca4.Adapter.BasketAdapter;
+import com.example.spca4.Adapter.PurchaseAdapter;
+import com.example.spca4.Model.Basket;
 import com.example.spca4.Model.ReadWriteUserDetails;
 import com.example.spca4.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,29 +32,27 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminProfile extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class PurchaseHistory extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     BottomNavigationView bottomNavigationView;
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     FirebaseAuth mAuth;
     String User;
-    TextView numbertextview;
-    TextView nametextview;
-    TextView emailtextview;
-    TextView userTypetextview;
-    DatabaseReference referenceProfile;
-
+    private com.example.spca4.Adapter.PurchaseAdapter PurchaseAdapter;
+    private List<com.example.spca4.Model.Basket> purchaseList;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_profile);
+        setContentView(R.layout.activity_purchase_history);
 
         mAuth = FirebaseAuth.getInstance();
         User = mAuth.getCurrentUser().getUid();
@@ -70,44 +72,6 @@ public class AdminProfile extends AppCompatActivity implements NavigationView.On
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setBackground(null);
 
-        numbertextview = findViewById(R.id.Phone);
-        nametextview = findViewById(R.id.Name);
-        emailtextview = findViewById(R.id.Email);
-        userTypetextview = findViewById(R.id.Type);
-
-        referenceProfile = FirebaseDatabase.getInstance().getReference("Registered Users");
-
-        if (User == null) {
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
-        }
-        else
-            referenceProfile.child((User)).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    ReadWriteUserDetails userprofile  = snapshot.getValue(ReadWriteUserDetails.class);
-                    if (userprofile != null){
-                        String name = userprofile.getName();
-                        String number = userprofile.getPhone();
-                        String email = userprofile.getEmail();
-                        String userType = userprofile.getUserType();
-
-                        nametextview.setText(name);
-                        numbertextview.setText(number);
-                        emailtextview.setText(email);
-                        userTypetextview.setText(userType);
-
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                    Toast.makeText(AdminProfile.this, "Error!", Toast.LENGTH_SHORT).show();
-
-                }
-            });
 
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -130,12 +94,59 @@ public class AdminProfile extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
+
+        recyclerView = findViewById(R.id.purchasesRCV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        purchaseList = new ArrayList<>();
+        PurchaseAdapter = new PurchaseAdapter(purchaseList, this);
+        recyclerView.setAdapter(PurchaseAdapter);
+
+        // Receive user details from previous activity
+        Intent intent = getIntent();
+        if (intent != null) {
+            ReadWriteUserDetails userDetails = (ReadWriteUserDetails) intent.getSerializableExtra("userDetails");
+            if (userDetails != null) {
+                String userId = userDetails.getUserId(); // Get the user ID from userDetails
+
+                // Now you have the correct userId, proceed with fetching the basket
+                fetchBasket(userId);
+            }
+        }
+
+
+
     }
+
+    private void fetchBasket(String userId) {
+        DatabaseReference basketRef = FirebaseDatabase.getInstance().getReference().child("Registered Users").child(userId).child("Basket");
+        basketRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                purchaseList.clear();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    com.example.spca4.Model.Basket purchaseItem = snapshot.getValue(com.example.spca4.Model.Basket.class);
+                                    if (purchaseItem != null) {
+                                        purchaseList.add(purchaseItem);
+                                    }
+                                }
+                                PurchaseAdapter.notifyDataSetChanged();
+                            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(PurchaseHistory.this, "Error fetching basket", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.main_menu3, menu);
         return true;
     }
 
@@ -143,10 +154,10 @@ public class AdminProfile extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int itemId = item.getItemId();
-        if (itemId == R.id.logout){
-            mAuth.signOut();
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);        }
+        if (itemId == R.id.backButton){
+            Intent intent = new Intent(getApplicationContext(), Customers.class);
+            startActivity(intent);
+            finish();        }
         return true;
     }
 

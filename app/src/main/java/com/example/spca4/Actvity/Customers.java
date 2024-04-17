@@ -42,7 +42,7 @@ public class Customers extends AppCompatActivity implements NavigationView.OnNav
     String User;
     private com.example.spca4.Adapter.UsersAdapter UsersAdapter;
     private List<ReadWriteUserDetails> userDetailsList;
-    private RecyclerView recyclerView, recyclerView2;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
